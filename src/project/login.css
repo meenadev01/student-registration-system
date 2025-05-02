@@ -1,0 +1,108 @@
+/* 
+.glass-container {
+  width: 350px;
+  height: 700px;
+  padding: 2px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  text-align: center;
+  margin: auto;
+  margin-top: 50px;
+  color: black;
+}
+
+.user h2 {
+  font-size: 24px;
+  color: black;
+  margin-bottom: 15px;
+}
+
+.inp {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 50%;
+  padding: 10px;
+  border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: black;
+  transition: 0.3s;
+}
+
+input::placeholder {
+  color: black;
+}
+
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: black;
+  padding: 10px 0;
+}
+
+
+
+.options a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+
+.options a:hover {
+  text-decoration: underline;
+}
+
+button {
+  width: 50%;
+  padding: 12px;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  border: none;
+  border-radius: 8px;
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #ff4b2b, #ff416c);
+}
+
+button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+
+h5 {
+  font-size: 14px;
+  color: rgb(22, 10, 10);
+  margin: 50px;
+}
+
+h5 a {
+  color: #ffcc00;
+  text-decoration: none;
+}
+
+h5 a:hover {
+  text-decoration: underline;
+}
+
+
+@media (max-width: 400px) {
+  .glass-container {
+    width: 90%;
+  }
+} */

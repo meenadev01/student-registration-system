@@ -1,49 +1,8 @@
-# Student Registration System
+# React + Vite
 
-A full-stack web application for managing student registrations, built with **React** (frontend) and **FastAPI** (backend). Features include student registration, login, search, filtering by department and CGPA, and deletion.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 🚀 Features
+Currently, two official plugins are available:
 
-- ✅ User authentication (login/register)
-- 🎓 Student registration form
-- 🔍 Search and filter by department, semester, and CGPA
-- 🗑️ Delete student records
-- 📦 FastAPI backend with MySQL integration
-- ⚛️ React frontend with Axios and React Router
-
----
-
-## 🖥️ Tech Stack
-
-**Frontend:**  
-- React  
-- Axios  
-- React Router  
-- CSS
-
-**Backend:**  
-- FastAPI  
-- MySQL  
-- SQLAlchemy  
-- CORS Middleware
-
----
-
-## 🛠️ Setup Instructions
-
-### 📌 Prerequisites
-- Node.js and npm
-- Python 3.9+
-- MySQL
-
----
-
-### 📦 Backend Setup (FastAPI)
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-
-# Run the FastAPI server
-uvicorn main:app --reload
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

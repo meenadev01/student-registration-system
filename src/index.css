@@ -1,0 +1,142 @@
+from fastapi import FastAPI, Depends, HTTPException, status
+from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String, DECIMAL
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import create_engine
+from passlib.context import CryptContext
+from fastapi.security import OAuth2PasswordBearer
+from typing import List
+import mysql.connector
+
+# Database setup
+SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://username:password@localhost/school"
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# Models
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(255), unique=True, index=True)
+    password = Column(String(255))
+
+class Student(Base):
+    __tablename__ = "students"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255))
+    department = Column(String(255))
+    semester = Column(Integer)
+    cgpa = Column(DECIMAL(3, 2))
+
+# Pydantic models for request validation
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+class StudentCreate(BaseModel):
+    name: str
+    department: str
+    semester: int
+    cgpa: float
+
+class StudentResponse(BaseModel):
+    id: int
+    name: str
+    department: str
+    semester: int
+    cgpa: float
+
+# FastAPI App setup
+app = FastAPI()
+
+# Dependency for getting the DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Password hashing and verification
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(password: str):
+    return pwd_context.hash(password)
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+# OAuth2PasswordBearer instance for authentication
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# Routes for User Authentication
+@app.post("/register")
+def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    # Check if user already exists
+    db_user = db.query(User).filter(User.username == user.username).first()
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    hashed_password = hash_password(user.password)
+    db_user = User(username=user.username, password=hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return {"msg": "User registered successfully"}
+
+@app.post("/login")
+def login_user(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.username == user.username).first()
+    if not db_user or not verify_password(user.password, db_user.password):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    return {"msg": "Login successful"}
+
+# Routes for Student Registration and Management
+@app.post("/students/", response_model=StudentResponse)
+def create_student(student: StudentCreate, db: Session = Depends(get_db)):
+    db_student = Student(
+        name=student.name,
+        department=student.department,
+        semester=student.semester,
+        cgpa=student.cgpa
+    )
+    db.add(db_student)
+    db.commit()
+    db.refresh(db_student)
+    return db_student
+
+@app.get("/students/", response_model=List[StudentResponse])
+def get_students(
+    department: str = None, 
+    semester: int = None, 
+    cgpa: float = None, 
+    db: Session = Depends(get_db)
+):
+    query = db.query(Student)
+    if department:
+        query = query.filter(Student.department == department)
+    if semester:
+        query = query.filter(Student.semester == semester)
+    if cgpa:
+        query = query.filter(Student.cgpa >= cgpa)
+    
+    students = query.all()
+    return students
+
+@app.delete("/students/{student_id}")
+def delete_student(student_id: int, db: Session = Depends(get_db)):
+    db_student = db.query(Student).filter(Student.id == student_id).first()
+    if not db_student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    
+    db.delete(db_student)
+    db.commit()
+    return {"msg": "Student deleted successfully"}
+
+# Run the app with uvicorn:
+# uvicorn main:app --reload
